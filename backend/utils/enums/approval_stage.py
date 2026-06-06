@@ -1,0 +1,7 @@
+from enum import Enum
+
+
+class ApprovalStage(str, Enum):
+    MANAGER_REVIEW = "MANAGER_REVIEW"
+    FINANCE_APPROVAL = "FINANCE_APPROVAL"
+    IT_PROVISIONING = "IT_PROVISIONING"

@@ -1,0 +1,9 @@
+from enum import Enum
+
+
+class RequestStage(str, Enum):
+    HR_REWORK = "HR_REWORK"
+    MANAGER_REVIEW = "MANAGER_REVIEW"
+    FINANCE_APPROVAL = "FINANCE_APPROVAL"
+    IT_PROVISIONING = "IT_PROVISIONING"
+    COMPLETED = "COMPLETED"
