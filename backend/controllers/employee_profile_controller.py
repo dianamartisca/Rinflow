@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity
 from services import (
     create_employee_profile,
     delete_employee_profile,
@@ -11,6 +12,7 @@ from services import (
 def add_employee_profile():
     try:
         data = request.get_json() or {}
+        data["created_by"] = int(get_jwt_identity())
         employee = create_employee_profile(data)
         return jsonify(employee), 201
     except ValueError as ve:
