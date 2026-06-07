@@ -18,11 +18,16 @@ class JobDescription(db.Model):
     )
 
     def to_dict(self):
+        employee = self.onboarding_request.employee if self.onboarding_request else None
+        employee_name = f"{employee.first_name} {employee.last_name}" if employee else None
+
         return {
             "id": self.id,
             "onboarding_request_id": self.onboarding_request_id,
             "workflow_run": self.workflow_run,
             "content": self.content,
+            "download_url": self.content,
+            "employee_name": employee_name,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }

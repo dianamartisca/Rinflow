@@ -6,6 +6,7 @@ from .employee_profile_services import (
     create_employee_profile,
     get_employee_profile,
     get_all_employee_profiles,
+    get_manager_review_employee_profiles,
     update_employee_profile,
     delete_employee_profile,
 )

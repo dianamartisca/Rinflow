@@ -68,7 +68,7 @@ def create_approval_history_entry(data):
 
 
 def get_all_approval_history_entries():
-    items = ApprovalHistory.query.filter_by(is_deleted=False).all()
+    items = ApprovalHistory.query.filter_by(is_deleted=False).order_by(ApprovalHistory.created_at.desc()).all()
     return [item.to_dict() for item in items]
 
 

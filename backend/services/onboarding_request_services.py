@@ -19,6 +19,13 @@ def create_onboarding_request(data):
     if not employee or employee.is_deleted:
         raise ValueError("EmployeeProfile not found")
 
+    existing_request = OnboardingRequest.query.filter_by(employee_id=employee_id, is_deleted=False).first()
+    if existing_request:
+        raise ValueError("Onboarding request already exists for this employee profile")
+
+    if employee.hardware_tier == HardwareTier.STANDARD and (finance_email or finance_id):
+        raise ValueError("finance_email is not allowed for STANDARD hardware tier")
+
     if manager_email:
         manager_id = get_user_id_by_email(manager_email, UserRole.MANAGER, "manager")
     elif not manager_id:
@@ -49,7 +56,10 @@ def create_onboarding_request(data):
 
 
 def get_all_onboarding_requests():
-    items = OnboardingRequest.query.filter_by(is_deleted=False).all()
+    items = OnboardingRequest.query.filter_by(is_deleted=False).order_by(
+        OnboardingRequest.created_at.desc(),
+        OnboardingRequest.id.desc(),
+    ).all()
     return [item.to_dict() for item in items]
 
 

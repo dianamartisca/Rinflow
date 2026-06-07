@@ -18,6 +18,12 @@ def list_employee_profiles():
     return get_employee_profiles()
 
 
+@employee_profiles_routes.route('/employee-profiles/manager-review', methods=['GET'])
+@roles_required('MANAGER')
+def list_manager_review_profiles():
+    return get_manager_review_profiles()
+
+
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['GET'])
 @roles_required('HR', 'MANAGER', 'ADMIN')
 def list_employee_profile_by_id(profile_id):

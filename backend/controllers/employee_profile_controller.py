@@ -5,6 +5,7 @@ from services import (
     delete_employee_profile,
     get_all_employee_profiles,
     get_employee_profile,
+    get_manager_review_employee_profiles,
     update_employee_profile,
 )
 
@@ -23,6 +24,11 @@ def add_employee_profile():
 
 def get_employee_profiles():
     items = get_all_employee_profiles()
+    return jsonify(items), 200
+
+
+def get_manager_review_profiles():
+    items = get_manager_review_employee_profiles(int(get_jwt_identity()))
     return jsonify(items), 200
 
 

@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import get_jwt, get_jwt_identity
 from services import (
     create_job_description,
     delete_job_description,
@@ -20,7 +21,9 @@ def add_job_description():
 
 
 def get_job_descriptions():
-    items = get_all_job_descriptions()
+    role = str(get_jwt().get("role", "")).upper()
+    manager_id = int(get_jwt_identity()) if role == "MANAGER" else None
+    items = get_all_job_descriptions(manager_id=manager_id)
     return jsonify(items), 200
 
 

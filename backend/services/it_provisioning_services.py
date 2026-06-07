@@ -16,7 +16,7 @@ def create_it_provisioning(data):
 
 
 def get_all_it_provisioning_records():
-    items = ITProvisioning.query.filter_by(is_deleted=False).all()
+    items = ITProvisioning.query.filter_by(is_deleted=False).order_by(ITProvisioning.created_at.desc()).all()
     return [item.to_dict() for item in items]
 
 
