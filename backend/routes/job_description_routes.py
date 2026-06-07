@@ -24,12 +24,6 @@ def list_job_description_by_id(job_description_id):
     return get_job_description_by_id(job_description_id)
 
 
-@job_descriptions_routes.route('/job-descriptions/<int:job_description_id>', methods=['PUT'])
-@roles_required('MANAGER')
-def update_job_description_by_id(job_description_id):
-    return put_job_description_by_id(job_description_id)
-
-
 @job_descriptions_routes.route('/job-descriptions/<int:job_description_id>', methods=['DELETE'])
 @roles_required('ADMIN')
 def remove_job_description_by_id(job_description_id):

@@ -24,6 +24,24 @@ def list_manager_review_profiles():
     return get_manager_review_profiles()
 
 
+@employee_profiles_routes.route('/employee-profiles/finance-approval', methods=['GET'])
+@roles_required('FINANCE')
+def list_finance_approval_profiles():
+    return get_finance_approval_profiles()
+
+
+@employee_profiles_routes.route('/employee-profiles/finance-approved', methods=['GET'])
+@roles_required('FINANCE')
+def list_finance_approved_profiles():
+    return get_finance_approved_profiles()
+
+
+@employee_profiles_routes.route('/employee-profiles/it-provisioning', methods=['GET'])
+@roles_required('IT')
+def list_it_provisioning_profiles():
+    return get_it_provisioning_profiles()
+
+
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['GET'])
 @roles_required('HR', 'MANAGER', 'ADMIN')
 def list_employee_profile_by_id(profile_id):
@@ -37,6 +55,6 @@ def update_employee_profile_by_id(profile_id):
 
 
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['DELETE'])
-@roles_required('HR', 'ADMIN')
+@roles_required('ADMIN')
 def remove_employee_profile_by_id(profile_id):
     return delete_employee_profile_by_id(profile_id)

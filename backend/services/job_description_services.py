@@ -86,21 +86,6 @@ def get_job_description(job_description_id):
     return item.to_dict()
 
 
-def update_job_description(job_description_id, data):
-    item = db.session.get(JobDescription, job_description_id)
-    if not item or item.is_deleted:
-        raise ValueError("JobDescription not found")
-
-    if not data:
-        raise ValueError("Payload cannot be empty")
-
-    if "content" in data:
-        item.content = data["content"]
-
-    db.session.commit()
-    return item.to_dict()
-
-
 def delete_job_description(job_description_id):
     item = db.session.get(JobDescription, job_description_id)
     if not item or item.is_deleted:

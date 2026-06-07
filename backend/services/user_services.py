@@ -91,15 +91,6 @@ def get_user(user_id):
 
     return user.to_dict()
 
-def get_user_by_username(username):
-    if not username:
-        raise ValueError("Username cannot be empty")
-
-    user = User.query.filter_by(username=username).first()
-    if not user or user.is_deleted:
-        raise ValueError("User not found")
-
-    return user.to_dict()
 
 def update_user(user_id, data):
     user = db.session.get(User, user_id)

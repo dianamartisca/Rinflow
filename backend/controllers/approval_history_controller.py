@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_jwt_extended import get_jwt_identity
 from services import (
     create_approval_history_entry,
     get_all_approval_history_entries,
@@ -9,6 +10,7 @@ from services import (
 def add_approval_history_entry():
     try:
         data = request.get_json() or {}
+        data["reviewer_id"] = int(get_jwt_identity())
         item = create_approval_history_entry(data)
         return jsonify(item), 201
     except ValueError as ve:

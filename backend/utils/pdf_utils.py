@@ -1,4 +1,5 @@
 import os
+import re
 import textwrap
 from datetime import date
 
@@ -7,6 +8,10 @@ from flask import current_app
 
 def _escape_pdf_text(value):
     return str(value).replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+
+def _unescape_pdf_text(value):
+    return value.replace("\\)", ")").replace("\\(", "(").replace("\\\\", "\\")
 
 
 def _build_pdf(lines):
@@ -74,3 +79,29 @@ def write_job_description_pdf(onboarding_request, requirements):
         pdf_file.write(_build_pdf(lines[:45]))
 
     return f"/static/job_descriptions/{filename}"
+
+
+def extract_job_description_requirements(static_path):
+    if not static_path:
+        return ""
+
+    prefix = "/static/"
+    relative_path = static_path[len(prefix):] if static_path.startswith(prefix) else static_path
+    path = os.path.join(current_app.static_folder, relative_path.replace("/", os.sep))
+    if not os.path.exists(path):
+        return ""
+
+    with open(path, "rb") as pdf_file:
+        content = pdf_file.read().decode("latin-1", errors="ignore")
+
+    lines = [_unescape_pdf_text(match) for match in re.findall(r"\((.*?)(?<!\\)\) Tj", content)]
+    if "Requirements:" not in lines:
+        return ""
+
+    requirements = []
+    for line in lines[lines.index("Requirements:") + 1:]:
+        if not line:
+            break
+        requirements.append(line)
+
+    return "\n".join(requirements)

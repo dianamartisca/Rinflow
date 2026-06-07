@@ -5,7 +5,6 @@ from services import (
     delete_job_description,
     get_all_job_descriptions,
     get_job_description,
-    update_job_description,
 )
 
 
@@ -33,19 +32,6 @@ def get_job_description_by_id(job_description_id):
         return jsonify(item), 200
     except ValueError as ve:
         return jsonify({"message": str(ve)}), 404
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-
-def put_job_description_by_id(job_description_id):
-    try:
-        data = request.get_json() or {}
-        item = update_job_description(job_description_id, data)
-        return jsonify(item), 200
-    except ValueError as ve:
-        message = str(ve)
-        status_code = 404 if message == "JobDescription not found" else 400
-        return jsonify({"message": message}), status_code
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 

@@ -24,12 +24,6 @@ def list_it_provisioning_by_id(provisioning_id):
     return get_it_provisioning_by_id(provisioning_id)
 
 
-@it_provisioning_routes.route('/it-provisioning/<int:provisioning_id>', methods=['PUT'])
-@roles_required('IT')
-def update_it_provisioning_by_id(provisioning_id):
-    return put_it_provisioning_by_id(provisioning_id)
-
-
 @it_provisioning_routes.route('/it-provisioning/<int:provisioning_id>', methods=['DELETE'])
 @roles_required('ADMIN')
 def remove_it_provisioning_by_id(provisioning_id):

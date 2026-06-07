@@ -1,4 +1,10 @@
+import bcrypt
+
 from models import User
+
+
+def _hash_password(password):
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def get_user_id_by_email(email, expected_role, label, required=True):

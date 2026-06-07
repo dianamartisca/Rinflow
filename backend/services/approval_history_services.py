@@ -14,6 +14,8 @@ def create_approval_history_entry(data):
     if not reviewer_id:
         raise ValueError("reviewer_id is required")
 
+    onboarding_request_id = int(onboarding_request_id)
+    reviewer_id = int(reviewer_id)
     onboarding_request = db.session.get(OnboardingRequest, onboarding_request_id)
     if not onboarding_request or onboarding_request.is_deleted:
         raise ValueError("OnboardingRequest not found")
@@ -29,7 +31,16 @@ def create_approval_history_entry(data):
     if stage != expected_stage:
         raise ValueError("Approval stage does not match onboarding current stage")
 
+    expected_reviewer_id = {
+        ApprovalStage.MANAGER_REVIEW: onboarding_request.manager_id,
+        ApprovalStage.FINANCE_APPROVAL: onboarding_request.finance_id,
+        ApprovalStage.IT_PROVISIONING: onboarding_request.it_id,
+    }.get(stage)
+    if expected_reviewer_id != reviewer_id:
+        raise ValueError("OnboardingRequest is not assigned to this reviewer")
+
     workflow_run = data.get("workflow_run", onboarding_request.workflow_run)
+    workflow_run = int(workflow_run)
     if workflow_run != onboarding_request.workflow_run:
         raise ValueError("workflow_run must match current onboarding workflow_run")
 

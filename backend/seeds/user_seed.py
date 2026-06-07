@@ -1,9 +1,8 @@
 import os
 
-import bcrypt
-
 from models import User, db
 from utils.enums import UserRole
+from utils.user_utils import _hash_password
 
 
 DEFAULT_PASSWORD = os.getenv("SEED_DEFAULT_PASSWORD")
@@ -41,11 +40,6 @@ DEFAULT_ROLE_ACCOUNTS = {
         "last_name": "Manager",
     },
 }
-
-
-def _hash_password(password):
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-
 
 def seed_default_users():
     created_roles = []

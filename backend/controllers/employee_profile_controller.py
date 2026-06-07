@@ -5,6 +5,9 @@ from services import (
     delete_employee_profile,
     get_all_employee_profiles,
     get_employee_profile,
+    get_finance_approval_employee_profiles,
+    get_finance_approved_employee_profiles,
+    get_it_provisioning_employee_profiles,
     get_manager_review_employee_profiles,
     update_employee_profile,
 )
@@ -29,6 +32,21 @@ def get_employee_profiles():
 
 def get_manager_review_profiles():
     items = get_manager_review_employee_profiles(int(get_jwt_identity()))
+    return jsonify(items), 200
+
+
+def get_finance_approval_profiles():
+    items = get_finance_approval_employee_profiles(int(get_jwt_identity()))
+    return jsonify(items), 200
+
+
+def get_finance_approved_profiles():
+    items = get_finance_approved_employee_profiles(int(get_jwt_identity()))
+    return jsonify(items), 200
+
+
+def get_it_provisioning_profiles():
+    items = get_it_provisioning_employee_profiles(int(get_jwt_identity()))
     return jsonify(items), 200
 
 

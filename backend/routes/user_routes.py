@@ -29,12 +29,6 @@ def list_user_by_id(user_id):
     return get_user_by_id(user_id)
 
 
-@user_routes.route('/users/username/<string:username>', methods=['GET'])
-@roles_required("ADMIN")
-def list_user_by_username(username):
-    return get_user_by_username_controller(username)
-
-
 @user_routes.route('/users/<int:user_id>', methods=['PUT'])
 @roles_required("ADMIN")
 def update_user_by_id(user_id):

@@ -1,6 +1,7 @@
-from models import EmployeeProfile, OnboardingRequest, db
-from utils.enums import HardwareTier, RequestStage
+from models import ApprovalHistory, EmployeeProfile, OnboardingRequest, db
+from utils.enums import ApprovalAction, ApprovalStage, HardwareTier, RequestStage
 from utils.date_utils import parse_future_workday
+from utils.employee_utils import _to_admin_employee_profile, _to_finance_profile
 from utils.enum_utils import parse_enum
 
 
@@ -20,7 +21,7 @@ def create_employee_profile(data):
 
 def get_all_employee_profiles():
     items = EmployeeProfile.query.filter_by(is_deleted=False).order_by(EmployeeProfile.created_at.desc()).all()
-    return [item.to_dict() for item in items]
+    return [_to_admin_employee_profile(item) for item in items]
 
 
 def get_manager_review_employee_profiles(manager_id):
@@ -48,6 +49,77 @@ def get_manager_review_employee_profiles(manager_id):
             }
         )
         profiles.append(profile)
+
+    return profiles
+
+
+def get_finance_approval_employee_profiles(finance_id):
+    items = (
+        OnboardingRequest.query.filter_by(
+            finance_id=finance_id,
+            current_stage=RequestStage.FINANCE_APPROVAL,
+            is_deleted=False,
+        )
+        .order_by(OnboardingRequest.updated_at.desc(), OnboardingRequest.id.desc())
+        .all()
+    )
+
+    profiles = []
+    for onboarding_request in items:
+        if not onboarding_request.employee or onboarding_request.employee.is_deleted:
+            continue
+        if onboarding_request.employee.hardware_tier != HardwareTier.PREMIUM:
+            continue
+
+        profiles.append(_to_finance_profile(onboarding_request))
+
+    return profiles
+
+
+def get_finance_approved_employee_profiles(finance_id):
+    approvals = (
+        ApprovalHistory.query.filter_by(
+            reviewer_id=finance_id,
+            stage=ApprovalStage.FINANCE_APPROVAL,
+            action=ApprovalAction.APPROVED,
+            is_deleted=False,
+        )
+        .order_by(ApprovalHistory.created_at.desc(), ApprovalHistory.id.desc())
+        .all()
+    )
+
+    profiles = []
+    seen_requests = set()
+    for approval in approvals:
+        onboarding_request = approval.onboarding_request
+        if not onboarding_request or onboarding_request.is_deleted or onboarding_request.id in seen_requests:
+            continue
+        if not onboarding_request.employee or onboarding_request.employee.is_deleted:
+            continue
+
+        seen_requests.add(onboarding_request.id)
+        profiles.append(_to_finance_profile(onboarding_request, approval.created_at.isoformat() if approval.created_at else None))
+
+    return profiles
+
+
+def get_it_provisioning_employee_profiles(it_id):
+    items = (
+        OnboardingRequest.query.filter_by(
+            it_id=it_id,
+            current_stage=RequestStage.IT_PROVISIONING,
+            is_deleted=False,
+        )
+        .order_by(OnboardingRequest.updated_at.desc(), OnboardingRequest.id.desc())
+        .all()
+    )
+
+    profiles = []
+    for onboarding_request in items:
+        if not onboarding_request.employee or onboarding_request.employee.is_deleted:
+            continue
+
+        profiles.append(_to_finance_profile(onboarding_request))
 
     return profiles
 
@@ -92,5 +164,14 @@ def delete_employee_profile(profile_id):
         raise ValueError("EmployeeProfile not found")
 
     item.is_deleted = True
+    for onboarding_request in item.onboarding_requests:
+        onboarding_request.is_deleted = True
+        for approval in onboarding_request.approval_history:
+            approval.is_deleted = True
+        for job_description in onboarding_request.job_descriptions:
+            job_description.is_deleted = True
+        for it_provisioning in onboarding_request.it_provisioning_records:
+            it_provisioning.is_deleted = True
+
     db.session.commit()
     return {"message": "EmployeeProfile deleted"}
