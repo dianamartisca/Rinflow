@@ -13,13 +13,13 @@ def create_employee_profile():
 
 
 @employee_profiles_routes.route('/employee-profiles', methods=['GET'])
-@jwt_required()
+@roles_required('HR', 'MANAGER', 'ADMIN')
 def list_employee_profiles():
     return get_employee_profiles()
 
 
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['GET'])
-@jwt_required()
+@roles_required('HR', 'MANAGER', 'ADMIN')
 def list_employee_profile_by_id(profile_id):
     return get_employee_profile_by_id(profile_id)
 
@@ -31,6 +31,6 @@ def update_employee_profile_by_id(profile_id):
 
 
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['DELETE'])
-@roles_required('HR')
+@roles_required('HR', 'ADMIN')
 def remove_employee_profile_by_id(profile_id):
     return delete_employee_profile_by_id(profile_id)

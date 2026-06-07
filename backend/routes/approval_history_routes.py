@@ -13,13 +13,12 @@ def create_approval_history_entry():
 
 
 @approval_history_routes.route('/approval-history', methods=['GET'])
-@jwt_required()
+@roles_required('ADMIN')
 def list_approval_history_entries():
     return get_approval_history_entries()
 
 
 @approval_history_routes.route('/approval-history/<int:history_id>', methods=['GET'])
-@jwt_required()
+@roles_required('ADMIN')
 def list_approval_history_by_id(history_id):
     return get_approval_history_by_id(history_id)
-

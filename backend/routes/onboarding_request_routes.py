@@ -13,15 +13,16 @@ def create_onboarding_request():
 
 
 @onboarding_requests_routes.route('/onboarding-requests', methods=['GET'])
-@jwt_required()
+@roles_required('ADMIN', 'HR')
 def list_onboarding_requests():
     return get_onboarding_requests()
 
 
 @onboarding_requests_routes.route('/onboarding-requests/<int:request_id>', methods=['GET'])
-@jwt_required()
+@roles_required('ADMIN', 'HR')
 def list_onboarding_request_by_id(request_id):
     return get_onboarding_request_by_id(request_id)
+
 
 @onboarding_requests_routes.route('/onboarding-requests/<int:request_id>/resubmit', methods=['POST'])
 @roles_required('HR')
@@ -30,6 +31,6 @@ def restart_onboarding_request(request_id):
 
 
 @onboarding_requests_routes.route('/onboarding-requests/<int:request_id>', methods=['DELETE'])
-@roles_required('HR')
+@roles_required('ADMIN')
 def remove_onboarding_request_by_id(request_id):
     return delete_onboarding_request_by_id(request_id)

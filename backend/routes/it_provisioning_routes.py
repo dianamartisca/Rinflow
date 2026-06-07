@@ -13,13 +13,13 @@ def create_it_provisioning():
 
 
 @it_provisioning_routes.route('/it-provisioning', methods=['GET'])
-@jwt_required()
+@roles_required('IT', 'ADMIN')
 def list_it_provisioning_records():
     return get_it_provisioning_records()
 
 
 @it_provisioning_routes.route('/it-provisioning/<int:provisioning_id>', methods=['GET'])
-@jwt_required()
+@roles_required('IT', 'ADMIN')
 def list_it_provisioning_by_id(provisioning_id):
     return get_it_provisioning_by_id(provisioning_id)
 
@@ -31,6 +31,6 @@ def update_it_provisioning_by_id(provisioning_id):
 
 
 @it_provisioning_routes.route('/it-provisioning/<int:provisioning_id>', methods=['DELETE'])
-@roles_required('IT')
+@roles_required('ADMIN')
 def remove_it_provisioning_by_id(provisioning_id):
     return delete_it_provisioning_by_id(provisioning_id)

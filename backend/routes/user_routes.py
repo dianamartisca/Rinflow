@@ -24,7 +24,7 @@ def list_users():
 
 
 @user_routes.route('/users/<int:user_id>', methods=['GET'])
-@jwt_required()
+@roles_required('ADMIN')
 def list_user_by_id(user_id):
     return get_user_by_id(user_id)
 
