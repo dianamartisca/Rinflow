@@ -1,27 +1,38 @@
 from models import EmployeeProfile, OnboardingRequest, db
-from utils.enums import HardwareTier, RequestStage, RequestStatus
-from utils.enum_utils import parse_enum
+from utils.enums import HardwareTier, RequestStage, RequestStatus, UserRole
+from utils.user_utils import get_user_id_by_email
 
 
 def create_onboarding_request(data):
     employee_id = data.get("employee_id")
+    manager_email = data.get("manager_email")
+    it_email = data.get("it_email")
+    finance_email = data.get("finance_email")
     manager_id = data.get("manager_id")
     it_id = data.get("it_id")
     finance_id = data.get("finance_id")
 
     if not employee_id:
         raise ValueError("employee_id is required")
-    if not manager_id:
-        raise ValueError("manager_id is required")
-    if not it_id:
-        raise ValueError("it_id is required")
 
     employee = db.session.get(EmployeeProfile, employee_id)
     if not employee or employee.is_deleted:
         raise ValueError("EmployeeProfile not found")
 
-    if employee.hardware_tier == HardwareTier.PREMIUM and not finance_id:
-        raise ValueError("finance_id is required for PREMIUM hardware tier")
+    if manager_email:
+        manager_id = get_user_id_by_email(manager_email, UserRole.MANAGER, "manager")
+    elif not manager_id:
+        raise ValueError("manager_email is required")
+
+    if it_email:
+        it_id = get_user_id_by_email(it_email, UserRole.IT, "it")
+    elif not it_id:
+        raise ValueError("it_email is required")
+
+    if finance_email:
+        finance_id = get_user_id_by_email(finance_email, UserRole.FINANCE, "finance", required=False)
+    elif employee.hardware_tier == HardwareTier.PREMIUM and not finance_id:
+        raise ValueError("finance_email is required for PREMIUM hardware tier")
 
     item = OnboardingRequest(
         employee_id=employee_id,

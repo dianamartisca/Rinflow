@@ -31,8 +31,11 @@ class OnboardingRequest(db.Model):
             "current_stage": self.current_stage.value if self.current_stage else None,
             "status": self.status.value if self.status else None,
             "manager_id": self.manager_id,
+            "manager_email": self.manager.email if self.manager else None,
             "finance_id": self.finance_id,
+            "finance_email": self.finance.email if self.finance else None,
             "it_id": self.it_id,
+            "it_email": self.it.email if self.it else None,
             "workflow_run": self.workflow_run,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None
