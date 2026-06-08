@@ -31,20 +31,20 @@ services:
     volumes:
       - ./backend/:/app:cached
       - ./static:/static
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #     args:
-  #       VITE_API_BASE_URL: "http://localhost:5000"
-  #   container_name: rinflow_frontend
-  #   restart: on-failure
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     - VITE_API_BASE_URL=http://localhost:5000
-  #   ports:
-  #     - "5173:80"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: "http://localhost:5000"
+    container_name: rinflow_frontend
+    restart: on-failure
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: "http://localhost:5000"
+    ports:
+      - "3000:3000"
 
 volumes:
   rinflow_postgres_data:
