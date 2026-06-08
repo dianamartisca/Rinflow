@@ -44,6 +44,12 @@ export const ROLE_WIDGETS: Record<UserRole, RoleWidget[]> = {
       endpoint: "/employee-profiles",
     },
     SHARED_WIDGETS[0],
+    {
+      key: "approval-history",
+      title: "Approval History",
+      description: "Review rejected workflow decisions and comments.",
+      endpoint: "/approval-history",
+    },
   ],
   MANAGER: [
     {

@@ -7,6 +7,7 @@ import type { RoleWidget } from "@/lib/role-config";
 
 import type {
   ActionStatus,
+  ApprovalHistoryRow,
   EmployeeProfileRow,
   HrCreateProfileState,
   HrEditState,
@@ -14,7 +15,13 @@ import type {
   OnboardingRequestRow,
   WidgetState,
 } from "../types";
-import { isEmployeeProfileRow, isFutureWorkday, isOnboardingRequestRow, sortOnboardingRequests } from "../utils";
+import {
+  isApprovalHistoryRow,
+  isEmployeeProfileRow,
+  isFutureWorkday,
+  isOnboardingRequestRow,
+  sortOnboardingRequests,
+} from "../utils";
 
 interface UseHrWorkspaceOptions {
   token: string;
@@ -45,7 +52,20 @@ export function useHrWorkspace({ token, widgets, widgetsState, fetchWidget }: Us
   const employeeWidget = widgets.find((item) => item.key === "employee-profiles");
   const employeeState = widgetsState["employee-profiles"];
   const onboardingState = widgetsState["onboarding-requests"];
+  const approvalHistoryState = widgetsState["approval-history"];
   const onboardingRequests = sortOnboardingRequests((onboardingState?.preview ?? []).filter(isOnboardingRequestRow));
+  const approvalHistoryEntries = (approvalHistoryState?.preview ?? [])
+    .filter(isApprovalHistoryRow)
+    .filter((entry) => entry.action === "REJECTED");
+  const rejectedApprovalByRequestId = new Map<number, ApprovalHistoryRow>();
+  approvalHistoryEntries.forEach((entry) => {
+    const current = rejectedApprovalByRequestId.get(entry.onboarding_request_id);
+    const entryCreatedAt = new Date(entry.created_at ?? "").getTime();
+    const currentCreatedAt = new Date(current?.created_at ?? "").getTime();
+    if (!current || (Number.isNaN(currentCreatedAt) ? 0 : currentCreatedAt) < (Number.isNaN(entryCreatedAt) ? 0 : entryCreatedAt)) {
+      rejectedApprovalByRequestId.set(entry.onboarding_request_id, entry);
+    }
+  });
   const onboardingRequestByEmployeeId = new Map(onboardingRequests.map((request) => [request.employee_id, request]));
   const employeeProfiles = (employeeState?.preview ?? []).filter(isEmployeeProfileRow).sort((first, second) => {
     const firstRequest = onboardingRequestByEmployeeId.get(first.id);
@@ -239,8 +259,10 @@ export function useHrWorkspace({ token, widgets, widgetsState, fetchWidget }: Us
     employeeWidget,
     employeeState,
     onboardingState,
+    approvalHistoryState,
     employeeProfiles,
     onboardingRequests,
+    rejectedApprovalByRequestId,
     onboardingActionsReady,
     employeeNameMap,
     hrCreateProfileState,

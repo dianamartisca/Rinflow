@@ -1,7 +1,7 @@
 "use client";
 
 import type { AuthUser } from "@/types/auth";
-import { HeaderIdentity, ThemeToggle } from "../shared";
+import { HeaderIdentity, RequirementsBlock, ThemeToggle } from "../shared";
 import type {
   ActionStatus,
   FinanceProfileRow,
@@ -81,9 +81,7 @@ export function ItWorkspace({
                   </div>
                   <div className="sm:col-span-2">
                     <p className="text-xs uppercase tracking-[0.1em] text-[var(--muted)]">Requirements</p>
-                    <p className="mt-2 whitespace-pre-wrap rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2">
-                      {profile.requirements || "No requirements available."}
-                    </p>
+                    <RequirementsBlock value={profile.requirements} />
                   </div>
                 </div>
 
@@ -111,7 +109,7 @@ export function ItWorkspace({
                   <textarea
                     value={form.comments}
                     onChange={(event) => updateItProvisioningForm(profile.id, "comments", event.target.value)}
-                    placeholder="Optional decision comments for approval history"
+                    placeholder="Optional decision comments"
                     rows={3}
                     className="rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-sm sm:col-span-2"
                   />
@@ -168,9 +166,7 @@ export function ItWorkspace({
                 <p><span className="font-semibold">Username:</span> {provisioning.username}</p>
                 <div className="sm:col-span-2">
                   <p className="text-xs uppercase tracking-[0.1em] text-[var(--muted)]">Requirements</p>
-                  <p className="mt-2 whitespace-pre-wrap rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2">
-                    {provisioning.requirements || "No requirements available."}
-                  </p>
+                  <RequirementsBlock value={provisioning.requirements} />
                 </div>
                 <div className="sm:col-span-2">
                   <p className="text-xs uppercase tracking-[0.1em] text-[var(--muted)]">Configuration Notes</p>

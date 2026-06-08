@@ -12,7 +12,7 @@ def create_approval_history_entry():
 
 
 @approval_history_routes.route('/approval-history', methods=['GET'])
-@roles_required('ADMIN')
+@roles_required('ADMIN', 'HR')
 def list_approval_history_entries():
     return get_approval_history_entries()
 

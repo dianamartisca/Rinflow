@@ -41,6 +41,24 @@ export function PreviewRecord({ data }: { data: unknown }) {
   );
 }
 
+export function RequirementsBlock({ value }: { value: string | null | undefined }) {
+  const text = value?.replace(/\s+/g, " ").trim();
+
+  if (!text) {
+    return (
+      <p className="mt-2 rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--muted)]">
+        No requirements available.
+      </p>
+    );
+  }
+
+  return (
+    <p className="mt-2 rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-sm leading-relaxed">
+      {text}
+    </p>
+  );
+}
+
 export function UserAvatar({ user, size = 48 }: { user: AuthUser | AdminUserRow; size?: number }) {
   const initialsSource = user.username || user.email || "?";
 

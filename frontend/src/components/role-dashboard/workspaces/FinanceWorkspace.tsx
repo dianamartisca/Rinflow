@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import type { AuthUser } from "@/types/auth";
-import { HeaderIdentity, ThemeToggle } from "../shared";
+import { HeaderIdentity, RequirementsBlock, ThemeToggle } from "../shared";
 import type { ActionStatus, FinanceDecisionFormState, FinanceProfileRow, WidgetState } from "../types";
 
 interface FinanceWorkspaceProps {
@@ -41,9 +41,7 @@ function FinanceProfileCard({
         </div>
         <div className="sm:col-span-2">
           <p className="text-xs uppercase tracking-[0.1em] text-[var(--muted)]">Requirements</p>
-          <p className="mt-2 whitespace-pre-wrap rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2">
-            {profile.requirements || "No requirements available."}
-          </p>
+          <RequirementsBlock value={profile.requirements} />
         </div>
       </div>
       {children}
@@ -96,7 +94,7 @@ export function FinanceWorkspace({
                     value={form.comments}
                     onChange={(event) => updateFinanceDecisionForm(profile.id, "comments", event.target.value)}
                     rows={3}
-                    placeholder="Optional notes for approval history"
+                    placeholder="Optional notes"
                     className="w-full resize-y rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
                   />
                 </label>

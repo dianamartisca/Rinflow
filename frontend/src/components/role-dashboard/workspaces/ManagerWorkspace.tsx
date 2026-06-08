@@ -119,7 +119,7 @@ export function ManagerWorkspace({
                     value={form.comments}
                     onChange={(event) => updateManagerReviewForm(profile.id, "comments", event.target.value)}
                     rows={3}
-                    placeholder="Optional notes for approval history"
+                    placeholder="Optional notes"
                     className="w-full resize-y rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
                   />
                 </label>

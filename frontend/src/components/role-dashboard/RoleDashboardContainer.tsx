@@ -123,8 +123,10 @@ export function RoleDashboard() {
         employeeWidget={hr.employeeWidget}
         employeeState={hr.employeeState}
         onboardingState={hr.onboardingState}
+        approvalHistoryState={hr.approvalHistoryState}
         employeeProfiles={hr.employeeProfiles}
         onboardingRequests={hr.onboardingRequests}
+        rejectedApprovalByRequestId={hr.rejectedApprovalByRequestId}
         onboardingActionsReady={hr.onboardingActionsReady}
         employeeNameMap={hr.employeeNameMap}
         hrCreateProfileState={hr.hrCreateProfileState}

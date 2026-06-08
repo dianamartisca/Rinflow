@@ -7,6 +7,7 @@ import type { AuthUser } from "@/types/auth";
 import { HeaderIdentity, ThemeToggle } from "../shared";
 import type {
   ActionStatus,
+  ApprovalHistoryRow,
   EmployeeProfileRow,
   HrCreateProfileState,
   HrEditState,
@@ -21,8 +22,10 @@ interface HrWorkspaceProps {
   employeeWidget: RoleWidget | undefined;
   employeeState: WidgetState | undefined;
   onboardingState: WidgetState | undefined;
+  approvalHistoryState: WidgetState | undefined;
   employeeProfiles: EmployeeProfileRow[];
   onboardingRequests: OnboardingRequestRow[];
+  rejectedApprovalByRequestId: Map<number, ApprovalHistoryRow>;
   onboardingActionsReady: boolean;
   employeeNameMap: Map<number, string>;
   hrCreateProfileState: HrCreateProfileState;
@@ -49,8 +52,10 @@ export function HrWorkspace({
   employeeWidget,
   employeeState,
   onboardingState,
+  approvalHistoryState,
   employeeProfiles,
   onboardingRequests,
+  rejectedApprovalByRequestId,
   onboardingActionsReady,
   employeeNameMap,
   hrCreateProfileState,
@@ -146,6 +151,7 @@ export function HrWorkspace({
             const onboardingStatus = hrOnboardingStatus[profile.id];
             const resubmitStatus = hrResubmitStatus[profile.id];
             const onboardingRequest = onboardingRequests.find((request) => request.employee_id === profile.id);
+            const rejectedApproval = onboardingRequest ? rejectedApprovalByRequestId.get(onboardingRequest.id) : undefined;
             const canStartOnboarding = onboardingActionsReady && !onboardingRequest;
             const canUpdateProfile = onboardingActionsReady && canUpdateEmployeeProfile(onboardingRequest);
             const canResubmitOnboarding = onboardingActionsReady && onboardingRequest?.current_stage === "HR_REWORK";
@@ -269,6 +275,16 @@ export function HrWorkspace({
                       <p className="mt-2 text-xs text-[var(--muted)]">
                         Onboarding request is waiting for HR rework.
                       </p>
+                      {approvalHistoryState?.loading ? (
+                        <p className="mt-2 text-xs text-[var(--muted)]">Loading rejection comments...</p>
+                      ) : rejectedApproval ? (
+                        <div className="mt-3 rounded-lg border border-[var(--line)] bg-[var(--paper)] px-3 py-2 text-xs">
+                          <p><span className="font-semibold">Rejected Stage:</span> {rejectedApproval.stage}</p>
+                          <p className="mt-1">
+                            <span className="font-semibold">Comments:</span> {rejectedApproval.comments?.trim() || "-"}
+                          </p>
+                        </div>
+                      ) : null}
                       {resubmitStatus?.error ? <p className="mt-2 text-xs text-[var(--alert)]">{resubmitStatus.error}</p> : null}
                       {resubmitStatus?.message ? <p className="mt-2 text-xs text-[var(--accent-strong)]">{resubmitStatus.message}</p> : null}
                       <button
@@ -295,32 +311,41 @@ export function HrWorkspace({
       <section className="panel mt-6 p-5 sm:p-6">
         <h2 className="text-xl font-semibold">3. Onboarding Requests</h2>
         {onboardingState?.error ? <p className="mt-3 text-sm text-[var(--alert)]">{onboardingState.error}</p> : null}
+        {approvalHistoryState?.error ? <p className="mt-3 text-sm text-[var(--alert)]">{approvalHistoryState.error}</p> : null}
         {!onboardingState || onboardingState.loading ? <p className="mt-3 text-sm">Loading onboarding requests...</p> : null}
 
         <div className="mt-4 max-h-[32rem] overflow-auto rounded-lg border border-[var(--line)]">
-          <table className="w-full min-w-[740px] border-collapse text-sm">
+          <table className="w-full min-w-[900px] border-collapse text-sm">
             <thead className="sticky top-0 z-10 bg-[var(--paper)] text-left shadow-[0_1px_0_var(--line)]">
               <tr>
                 <th className="px-3 py-2">Employee</th>
                 <th className="px-3 py-2">Current Stage</th>
                 <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Rejected Stage</th>
+                <th className="px-3 py-2">Comments</th>
                 <th className="px-3 py-2">Created At</th>
                 <th className="px-3 py-2">Updated At</th>
               </tr>
             </thead>
             <tbody>
-              {onboardingRequests.map((request) => (
-                <tr key={request.id} className="border-t border-[var(--line)]">
-                  <td className="px-3 py-2">{employeeNameMap.get(request.employee_id) ?? `Employee #${request.employee_id}`}</td>
-                  <td className="px-3 py-2">{request.current_stage}</td>
-                  <td className="px-3 py-2">{request.status}</td>
-                  <td className="px-3 py-2">{formatDateTime(request.created_at)}</td>
-                  <td className="px-3 py-2">{formatDateTime(request.updated_at)}</td>
-                </tr>
-              ))}
+              {onboardingRequests.map((request) => {
+                const rejectedApproval = rejectedApprovalByRequestId.get(request.id);
+
+                return (
+                  <tr key={request.id} className="border-t border-[var(--line)]">
+                    <td className="px-3 py-2">{employeeNameMap.get(request.employee_id) ?? `Employee #${request.employee_id}`}</td>
+                    <td className="px-3 py-2">{request.current_stage}</td>
+                    <td className="px-3 py-2">{request.status}</td>
+                    <td className="px-3 py-2">{request.current_stage === "HR_REWORK" ? rejectedApproval?.stage ?? "-" : "-"}</td>
+                    <td className="px-3 py-2">{request.current_stage === "HR_REWORK" ? rejectedApproval?.comments?.trim() || "-" : "-"}</td>
+                    <td className="px-3 py-2">{formatDateTime(request.created_at)}</td>
+                    <td className="px-3 py-2">{formatDateTime(request.updated_at)}</td>
+                  </tr>
+                );
+              })}
               {!onboardingRequests.length && onboardingState && !onboardingState.loading ? (
                 <tr>
-                  <td className="px-3 py-3 text-sm" colSpan={5}>No onboarding requests yet.</td>
+                  <td className="px-3 py-3 text-sm" colSpan={7}>No onboarding requests yet.</td>
                 </tr>
               ) : null}
             </tbody>
