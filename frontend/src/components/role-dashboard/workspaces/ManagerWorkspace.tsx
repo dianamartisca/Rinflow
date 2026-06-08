@@ -19,8 +19,10 @@ interface ManagerWorkspaceProps {
   jobDescriptions: JobDescriptionRow[];
   managerReviewForms: Record<number, ManagerReviewFormState>;
   managerReviewStatus: Record<number, ActionStatus>;
+  managerAiStatus: Record<number, ActionStatus>;
   handleLogout: () => void;
   updateManagerReviewForm: (profileId: number, field: keyof ManagerReviewFormState, value: string) => void;
+  generateManagerRequirements: (profile: ManagerReviewProfileRow) => void;
   submitManagerReject: (profile: ManagerReviewProfileRow) => void;
   submitManagerApprove: (profile: ManagerReviewProfileRow) => void;
 }
@@ -33,8 +35,10 @@ export function ManagerWorkspace({
   jobDescriptions,
   managerReviewForms,
   managerReviewStatus,
+  managerAiStatus,
   handleLogout,
   updateManagerReviewForm,
+  generateManagerRequirements,
   submitManagerReject,
   submitManagerApprove,
 }: ManagerWorkspaceProps) {
@@ -59,6 +63,7 @@ export function ManagerWorkspace({
           {reviewProfiles.map((profile) => {
             const form = managerReviewForms[profile.id] ?? { requirements: "", comments: "" };
             const status = managerReviewStatus[profile.id];
+            const aiStatus = managerAiStatus[profile.id];
 
             return (
               <article key={profile.id} className="rounded-lg border border-[var(--line)] bg-white p-4">
@@ -83,7 +88,17 @@ export function ManagerWorkspace({
                 </dl>
 
                 <label className="mt-4 block text-sm">
-                  <span className="mb-2 block font-medium">Job Requirements</span>
+                  <span className="mb-2 flex flex-wrap items-center justify-between gap-2 font-medium">
+                    Job Requirements
+                    <button
+                      type="button"
+                      onClick={() => generateManagerRequirements(profile)}
+                      disabled={aiStatus?.loading}
+                      className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-semibold hover:border-[var(--accent)] disabled:opacity-70"
+                    >
+                      {aiStatus?.loading ? "Generating..." : "Generate with AI"}
+                    </button>
+                  </span>
                   <textarea
                     value={form.requirements}
                     onChange={(event) => updateManagerReviewForm(profile.id, "requirements", event.target.value)}
@@ -92,6 +107,8 @@ export function ManagerWorkspace({
                     className="w-full resize-y rounded-lg border border-[var(--line)] bg-white px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
                   />
                 </label>
+                {aiStatus?.error ? <p className="mt-2 text-xs text-[var(--alert)]">{aiStatus.error}</p> : null}
+                {aiStatus?.message ? <p className="mt-2 text-xs text-[var(--accent-strong)]">{aiStatus.message}</p> : null}
 
                 <label className="mt-4 block text-sm">
                   <span className="mb-2 block font-medium">Decision Comments</span>

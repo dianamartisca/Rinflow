@@ -106,8 +106,10 @@ export function RoleDashboard() {
         jobDescriptions={manager.jobDescriptions}
         managerReviewForms={manager.managerReviewForms}
         managerReviewStatus={manager.managerReviewStatus}
+        managerAiStatus={manager.managerAiStatus}
         handleLogout={handleLogout}
         updateManagerReviewForm={manager.updateManagerReviewForm}
+        generateManagerRequirements={(profile) => void manager.generateManagerRequirements(profile)}
         submitManagerReject={(profile) => void manager.submitManagerReject(profile)}
         submitManagerApprove={(profile) => void manager.submitManagerApprove(profile)}
       />

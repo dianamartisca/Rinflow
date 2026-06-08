@@ -37,3 +37,4 @@ from .approval_history_services import (
     get_approval_history_entry,
     get_all_approval_history_entries,
 )
+from .ai_generation_services import generate_job_responsibilities

@@ -5,6 +5,7 @@ from config import Config
 
 from models import db
 from .approval_history_routes import approval_history_routes
+from .ai_generation_routes import ai_generation_routes
 from .employee_profile_routes import employee_profiles_routes
 from .it_provisioning_routes import it_provisioning_routes
 from .job_description_routes import job_descriptions_routes
@@ -22,6 +23,7 @@ def create_app():
     jwt = JWTManager(app)
 
     app.register_blueprint(user_routes)
+    app.register_blueprint(ai_generation_routes)
     app.register_blueprint(employee_profiles_routes)
     app.register_blueprint(onboarding_requests_routes)
     app.register_blueprint(job_descriptions_routes)

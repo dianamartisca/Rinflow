@@ -20,6 +20,7 @@ interface UseManagerWorkspaceOptions {
 export function useManagerWorkspace({ token, user, widgets, widgetsState, fetchWidget }: UseManagerWorkspaceOptions) {
   const [managerReviewForms, setManagerReviewForms] = useState<Record<number, ManagerReviewFormState>>({});
   const [managerReviewStatus, setManagerReviewStatus] = useState<Record<number, ActionStatus>>({});
+  const [managerAiStatus, setManagerAiStatus] = useState<Record<number, ActionStatus>>({});
 
   const reviewState = widgetsState["manager-review-profiles"];
   const jobDescriptionState = widgetsState["job-descriptions"];
@@ -47,6 +48,48 @@ export function useManagerWorkspace({ token, user, widgets, widgetsState, fetchW
     }
     if (jobDescriptionWidget) {
       void fetchWidget(jobDescriptionWidget);
+    }
+  }
+
+  async function generateManagerRequirements(profile: ManagerReviewProfileRow) {
+    setManagerAiStatus((current) => ({
+      ...current,
+      [profile.id]: { loading: true, message: null, error: null },
+    }));
+
+    try {
+      const result = await apiRequest<{ content: string }>(
+        "/ai/job-responsibilities",
+        {
+          method: "POST",
+          body: {
+            role: profile.role,
+          },
+        },
+        token,
+      );
+
+      setManagerReviewForms((current) => {
+        const defaultForm: ManagerReviewFormState = { requirements: "", comments: "" };
+        return {
+          ...current,
+          [profile.id]: {
+            ...defaultForm,
+            ...(current[profile.id] ?? {}),
+            requirements: result.content,
+          },
+        };
+      });
+      setManagerAiStatus((current) => ({
+        ...current,
+        [profile.id]: { loading: false, message: "AI draft generated", error: null },
+      }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "AI generation failed";
+      setManagerAiStatus((current) => ({
+        ...current,
+        [profile.id]: { loading: false, message: null, error: message },
+      }));
     }
   }
 
@@ -143,7 +186,9 @@ export function useManagerWorkspace({ token, user, widgets, widgetsState, fetchW
     jobDescriptions,
     managerReviewForms,
     managerReviewStatus,
+    managerAiStatus,
     updateManagerReviewForm,
+    generateManagerRequirements,
     submitManagerReject,
     submitManagerApprove,
   };
