@@ -1,12 +1,12 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { apiRequest } from "@/lib/api";
 import { getStoredAuth, storeAuth } from "@/lib/auth-storage";
 import type { LoginResponse } from "@/types/auth";
+import { Logo, ThemeToggle } from "./role-dashboard/shared";
 
 export function LoginForm() {
   const router = useRouter();
@@ -45,9 +45,12 @@ export function LoginForm() {
 
   return (
     <div className="panel rise w-full max-w-md p-8 sm:p-10">
-      <div className="flex items-center gap-3">
-        <Image src="/logo.svg" alt="Rinflow logo" width={48} height={48} className="shrink-0" priority />
-        <h1 className="headline text-4xl font-semibold">Rinflow</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Logo />
+          <h1 className="headline text-4xl font-semibold">Rinflow</h1>
+        </div>
+        <ThemeToggle />
       </div>
       <p className="mt-3 text-sm text-[var(--muted)]">
         Sign in with your email and password to continue.

@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   title: "Rinflow",
   description: "Role-based onboarding operations dashboard",
   icons: {
-    icon: "/logo.svg",
-    shortcut: "/logo.svg",
-    apple: "/logo.svg",
+    icon: "/logo-white.svg",
+    shortcut: "/logo-white.svg",
+    apple: "/logo-white.svg",
   },
 };
 

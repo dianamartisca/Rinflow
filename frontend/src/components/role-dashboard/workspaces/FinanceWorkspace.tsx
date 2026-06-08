@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import type { AuthUser } from "@/types/auth";
-import { HeaderIdentity } from "../shared";
+import { HeaderIdentity, ThemeToggle } from "../shared";
 import type { ActionStatus, FinanceDecisionFormState, FinanceProfileRow, WidgetState } from "../types";
 
 interface FinanceWorkspaceProps {
@@ -67,12 +67,15 @@ export function FinanceWorkspace({
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <header className="panel rise flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <HeaderIdentity user={user} title="Finance Workspace" />
-        <button
-          onClick={handleLogout}
-          className="rounded-xl border border-[var(--line)] bg-white px-4 py-2 text-sm font-medium hover:border-[var(--accent)]"
-        >
-          Log out
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <ThemeToggle />
+          <button
+            onClick={handleLogout}
+            className="rounded-xl border border-[var(--line)] bg-white px-4 py-2 text-sm font-medium hover:border-[var(--accent)]"
+          >
+            Log out
+          </button>
+        </div>
       </header>
 
       <section className="panel mt-6 p-5 sm:p-6">
