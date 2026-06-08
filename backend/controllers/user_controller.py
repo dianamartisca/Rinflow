@@ -15,6 +15,7 @@ def add_user():
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
+
 def login():
     try:
         data = request.get_json() or {}

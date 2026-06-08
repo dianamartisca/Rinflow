@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask_jwt_extended import jwt_required
 from auth import roles_required
 from controllers.it_provisioning_controller import *
 

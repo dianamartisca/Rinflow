@@ -91,5 +91,7 @@ def delete_onboarding_request(request_id):
         raise ValueError("OnboardingRequest not found")
 
     item.is_deleted = True
+    for approval in item.approval_history:
+        approval.is_deleted = True
     db.session.commit()
     return {"message": "OnboardingRequest deleted"}

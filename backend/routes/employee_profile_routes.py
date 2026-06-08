@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask_jwt_extended import jwt_required
 from auth import roles_required
 from controllers.employee_profile_controller import *
 
@@ -13,7 +12,7 @@ def create_employee_profile():
 
 
 @employee_profiles_routes.route('/employee-profiles', methods=['GET'])
-@roles_required('HR', 'MANAGER', 'ADMIN')
+@roles_required('HR', 'ADMIN')
 def list_employee_profiles():
     return get_employee_profiles()
 
@@ -43,7 +42,7 @@ def list_it_provisioning_profiles():
 
 
 @employee_profiles_routes.route('/employee-profiles/<int:profile_id>', methods=['GET'])
-@roles_required('HR', 'MANAGER', 'ADMIN')
+@roles_required('HR', 'ADMIN')
 def list_employee_profile_by_id(profile_id):
     return get_employee_profile_by_id(profile_id)
 
