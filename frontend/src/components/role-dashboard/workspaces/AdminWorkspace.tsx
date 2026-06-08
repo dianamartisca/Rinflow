@@ -246,7 +246,9 @@ export function AdminWorkspace({
                             <p><span className="font-semibold">Reviewer:</span> {reviewerName}</p>
                             <p><span className="font-semibold">Created:</span> {formatDateTime(entry.created_at ?? undefined)}</p>
                           </div>
-                          {entry.comments ? <p className="mt-2 text-[var(--muted)]">{entry.comments}</p> : null}
+                          <p className="mt-2 text-[var(--muted)]">
+                            <span className="font-semibold text-[var(--ink)]">Comments:</span> {entry.comments?.trim() || "-"}
+                          </p>
                         </div>
                       );
                     })}
